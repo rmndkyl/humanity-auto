@@ -4,6 +4,7 @@ const axios = require("axios");
 const { Web3 } = require("web3");
 const { logger } = require("./config/logger");
 const displayBanner = require("./config/banner");
+const ProxyHandler = require('./config/proxy-handler');
 const CountdownTimer = require("./config/countdown");
 const { ColorTheme } = require("./config/colors");
 
@@ -63,6 +64,8 @@ const BRIDGE_ABI = [
 
 class HumanityClient {
   constructor() {
+    this.proxyHandler = new ProxyHandler();
+    this.proxyHandler.loadProxies();
     this.initializeWeb3();
     this.initializeHeaders();
   }
@@ -93,7 +96,13 @@ class HumanityClient {
   }
 
   initializeWeb3() {
-    this.web3 = new Web3(new Web3.providers.HttpProvider(CONSTANTS.RPC_URL));
+    const proxy = this.proxyHandler.getCurrentProxy();
+    const proxyUrl = this.proxyHandler.getWeb3ProxyConfig(proxy);
+    const provider = new Web3.providers.HttpProvider(CONSTANTS.RPC_URL, {
+      proxy: proxyUrl
+    });
+    
+    this.web3 = new Web3(provider);
     this.contract = new this.web3.eth.Contract(
       CONTRACT_ABI,
       CONSTANTS.CONTRACT_ADDRESS
@@ -271,10 +280,16 @@ class HumanityClient {
 
   async claimTHP(address) {
     try {
+      const proxy = this.proxyHandler.getNextProxy();
+      const proxyConfig = this.proxyHandler.getAxiosProxyConfig(proxy);
+      
       const response = await axios.post(
         CONSTANTS.FAUCET_URL,
         { address },
-        { headers: this.headers }
+        { 
+          headers: this.headers,
+          proxy: proxyConfig
+        }
       );
 
       if (response.status === 200 && response.data.msg) {
