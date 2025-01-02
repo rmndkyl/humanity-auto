@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const { logger } = require('./config/logger');
-const { ColorTheme } = require('./config/colors');
+const { logger } = require('./logger');
+const { ColorTheme } = require('./colors');
 
 const colors = new ColorTheme();
 
