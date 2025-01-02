@@ -16,8 +16,8 @@ function displayBanner() {
   console.log(
     colors.style("===============================================", "border") 
   );
-  console.log(colors.style("Telegram Channel:", "https://t.me/layerairdrop")); 
-  console.log(colors.style("Telegram Channel", "https://t.me/layerairdropdiskusi")); 
+  console.log(colors.style("Telegram Channel: https://t.me/layerairdrop")); 
+  console.log(colors.style("Telegram Channel: https://t.me/layerairdropdiskusi")); 
   console.log(
     colors.style("===============================================\n", "border") 
   );
